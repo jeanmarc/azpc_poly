@@ -2,11 +2,10 @@ package nl.about42.poly.validator
 
 import akka.actor.{Actor, ActorLogging}
 import akka.http.scaladsl.model.{StatusCode, StatusCodes}
+import nl.about42.poly.Polygon
 
 import scala.collection.mutable
 
-case class Vertice( x: Int, y: Int)
-case class Polygon(edges: Seq[Vertice])
 case class AddPolygon(name: String, polygon: Polygon)
 case class RemovePolygon( name: String)
 case class GetPolygon( name: String)

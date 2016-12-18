@@ -1,7 +1,7 @@
 package nl.about42.poly.validator
 
 /**
-  * Validates the polygon
+  * Validates the polygon (it must have coordinates between 1 and size, for both x and y)
   */
 trait PolygonValidator {
   def validate( polygon: Polygon): Boolean = {
