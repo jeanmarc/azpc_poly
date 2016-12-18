@@ -2,6 +2,9 @@
 <head><title>Polygon drawer</title></head>
 <script>
 
+
+var initialized = false;
+
 function drawPolygon() {
     var form = document.getElementById("input_form");
     var data = form.elements["poly_input"].value;
@@ -13,10 +16,15 @@ function drawPolygon() {
     debugField.value = vertices;
 
     var c = document.getElementById("canvas");
+    var ctx = c.getContext("2d");
+    if (initialized == false) {
+        ctx.translate(0, c.height);
+        ctx.scale(1, -1);
+        initialized = true;
+    }
 
     var zoomFactor = c.width / vertices.length;
 
-    var ctx = c.getContext("2d");
     console.log("clearing " + c.width + " by " + c.height);
     ctx.clearRect(0, 0, c.width, c.height);
 
