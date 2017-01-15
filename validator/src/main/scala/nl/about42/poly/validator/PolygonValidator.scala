@@ -1,5 +1,7 @@
 package nl.about42.poly.validator
 
+import nl.about42.poly.Polygon
+
 /**
   * Validates the polygon (it must have coordinates between 1 and size, for both x and y)
   */
