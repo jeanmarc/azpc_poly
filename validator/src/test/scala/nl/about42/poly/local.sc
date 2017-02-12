@@ -1,34 +1,67 @@
 
-case class Vertice( x: Int, y: Int)
-case class Polygon(edges: Seq[Vertice])
+import nl.about42.poly._
+import nl.about42.poly.generator.VerticesGenerator
+import nl.about42.poly.validator.PolygonValidator
 
-val size = 3
-val base1 = (1 to size).toList.permutations
-val base = (1 to size).toList.permutations
-val xValues = (2 to size).toList.permutations
+import scala.collection.mutable
 
-val candidates = for {
-  b1 <- base1
-  x <- (2 to size).toList.permutations
-} yield (b1, x)
+val v1 = new nl.about42.poly.Vertex(1, 1)
+val v2 = new nl.about42.poly.Vertex(5, 2)
+val v3 = Vertex(9,3)
 
-def makePolygon( yValues: List[Int], xIndices: List[Int]): Polygon = {
-  val vertices = xIndices.map(x => Vertice(x, yValues(x-1)))
-  Polygon(vertices)
+val e = new nl.about42.poly.Edge(v1, v2)
+
+e.slope
+
+val e2 = new Edge(v2, v1)
+val e3 = new Edge(v3, v1)
+
+e.slope.equals(e2.slope)
+e.slope.equals(e3.slope)
+e2.slope equals e3.slope
+
+e3.slope
+
+val cand = (0 to 3).toList.permutations
+
+while (cand.hasNext)
+  System.out.println(cand.next)
+
+//The values of n are 5, 7, 11, 17, 23, 29, 37, 47, 59, 71, 83, 97, 113, 131, 149, 167, 191, 223, 257, 293, 331, 373, 419, 467, 521.
+
+
+val pg = new VerticesGenerator(11).getPolygons()
+
+class test extends PolygonValidator {
+
 }
 
-val test = candidates.map(x => makePolygon(x._1, 1 :: x._2))
 
-test.foreach(x => System.out.println(x.edges))
+var minCandidate: Polygon = new Polygon(List(Vertex(1,1), Vertex(2,2)))
+var maxCandidate: Polygon = new Polygon(List(Vertex(1,1), Vertex(2,2)))
+var minArea: Double = 10e200
+var maxArea: Double = 0
 
+val tester = new test
 
-def getPolygons(): Iterator[Polygon] = {
-  for {
-    yValues <- base
-    xIndices <- (2 to size).toList.permutations
-  } yield (makePolygon( yValues, 1 :: xIndices))
+while (pg.hasNext){
+  val p = pg.next()
+  if (tester.validate(p)){
+    val area = p.area
+    if (area > maxArea) {
+      maxCandidate = p
+      maxArea = area
+    }
+    if (area < minArea){
+      minCandidate = p
+      minArea = area
+    }
+  }
 }
 
-val t2 = getPolygons()
+minCandidate.codeString
+minArea
 
-t2.foreach(x => System.out.println(x.edges))
+maxCandidate.codeString
+maxArea
+

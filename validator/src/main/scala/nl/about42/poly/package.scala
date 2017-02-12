@@ -1,7 +1,46 @@
 package nl.about42
 
 package object poly {
-  case class Vertice( x: Int, y: Int)
-  case class Polygon(edges: Seq[Vertice])
+  case class Vertex(x: Int, y: Int) {
+    override def toString: String = {
+      s"($x,$y)"
+    }
+  }
+
+  case class Slope(dx: Int, dy: Int) {
+    def equals( s: Slope): Boolean = {
+      dx * s.dy == dy * s.dx
+    }
+  }
+
+  case class Edge(v1: Vertex, v2: Vertex) {
+    val slope = calculateSlope(v1, v2)
+
+    /**
+      * Returns normalized slope of the edge
+      */
+    private def calculateSlope(v1: Vertex, v2: Vertex): Slope = {
+      val dx = v2.x - v1.x
+      val dy = v2.y - v1.y
+      Slope(dx, dy)
+    }
+  }
+
+  case class Polygon(vertices: Seq[Vertex]) {
+    private val v2 = vertices.tail :+ vertices.head
+    val edges = vertices.zip(v2).map(e => new Edge(e._1, e._2))
+
+    def codeString: String = {
+      vertices.mkString(",")
+    }
+
+    /*
+      Area of polygon is given by formula:
+      area = 0.5 * abs(  (x1*y2 - y1*x2) + (x2*y3 - y2*x3) ... + (xN*y1 - yN*x1)  )
+     */
+    def area: Double = {
+      0.5 * Math.abs( vertices.zip(vertices.tail :+ vertices.head).foldLeft(0.0)( (sum, pair) => sum + pair._1.x * pair._2.y - pair._1.y * pair._2.x))
+    }
+  }
 
 }

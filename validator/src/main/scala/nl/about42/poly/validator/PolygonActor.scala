@@ -5,6 +5,6 @@ import akka.actor.Actor
 /**
   * Actor handling http requests for polygons
   */
-class PolygonActor extends Actor {
+abstract class PolygonActor extends Actor {
 
 }
