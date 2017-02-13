@@ -26,6 +26,7 @@ package object poly {
     }
   }
 
+  // a closed path of vertices
   case class Polygon(vertices: Seq[Vertex]) {
     private val v2 = vertices.tail :+ vertices.head
     val edges = vertices.zip(v2).map(e => new Edge(e._1, e._2))
@@ -41,6 +42,23 @@ package object poly {
     def area: Double = {
       0.5 * Math.abs( vertices.zip(vertices.tail :+ vertices.head).foldLeft(0.0)( (sum, pair) => sum + pair._1.x * pair._2.y - pair._1.y * pair._2.x))
     }
+  }
+
+  /*
+     Path is an unclosed sequence of vertices
+   */
+  case class Path( vertices: Seq[Vertex]){
+    val edges = vertices.size match {
+      case 0 => Seq.empty
+      case 1 => Seq.empty
+      case _ => vertices.dropRight (1).zip (vertices.tail).map (e => new Edge (e._1, e._2) )
+    }
+
+    def codeString: String = {
+      vertices.mkString(",")
+    }
+
+    def asPolygon: Polygon = new Polygon(vertices)
   }
 
 }
