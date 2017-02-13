@@ -47,7 +47,7 @@ package object poly {
   /*
      Path is an unclosed sequence of vertices
    */
-  case class Path( vertices: Seq[Vertex]){
+  case class Path( val vertices: Seq[Vertex]){
     val edges = vertices.size match {
       case 0 => Seq.empty
       case 1 => Seq.empty
