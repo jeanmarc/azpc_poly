@@ -19,11 +19,11 @@ object ValidatorApp extends App {
         complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, "<h1>Some work that was.</h1>"))
       }
     } ~
-    pathEndOrSingleSlash {
-      get {
-        complete("Nothing here yet.")
+      pathEndOrSingleSlash {
+        get {
+          complete("Nothing here yet.")
+        }
       }
-    }
 
   // Format: ON
 

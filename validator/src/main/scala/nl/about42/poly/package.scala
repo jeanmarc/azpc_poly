@@ -8,7 +8,7 @@ package object poly {
   }
 
   case class Slope(dx: Int, dy: Int) {
-    def equals( s: Slope): Boolean = {
+    def equals(s: Slope): Boolean = {
       dx * s.dy == dy * s.dx
     }
   }
@@ -17,8 +17,8 @@ package object poly {
     val slope = calculateSlope(v1, v2)
 
     /**
-      * Returns normalized slope of the edge
-      */
+     * Returns normalized slope of the edge
+     */
     private def calculateSlope(v1: Vertex, v2: Vertex): Slope = {
       val dx = v2.x - v1.x
       val dy = v2.y - v1.y
@@ -40,18 +40,18 @@ package object poly {
       area = 0.5 * abs(  (x1*y2 - y1*x2) + (x2*y3 - y2*x3) ... + (xN*y1 - yN*x1)  )
      */
     def area: Double = {
-      0.5 * Math.abs( vertices.zip(vertices.tail :+ vertices.head).foldLeft(0.0)( (sum, pair) => sum + pair._1.x * pair._2.y - pair._1.y * pair._2.x))
+      0.5 * Math.abs(vertices.zip(vertices.tail :+ vertices.head).foldLeft(0.0)((sum, pair) => sum + pair._1.x * pair._2.y - pair._1.y * pair._2.x))
     }
   }
 
   /*
      Path is an unclosed sequence of vertices
    */
-  case class Path( val vertices: Seq[Vertex]){
+  case class Path(val vertices: Seq[Vertex]) {
     val edges = vertices.size match {
       case 0 => Seq.empty
       case 1 => Seq.empty
-      case _ => vertices.dropRight (1).zip (vertices.tail).map (e => new Edge (e._1, e._2) )
+      case _ => vertices.dropRight(1).zip(vertices.tail).map(e => new Edge(e._1, e._2))
     }
 
     def codeString: String = {
