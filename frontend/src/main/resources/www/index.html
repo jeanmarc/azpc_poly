@@ -12,6 +12,7 @@ function drawPolygon() {
     var debugField = form.elements["debug"];
 
     var vertices = data.replace(/\s/g, '').split(/[()]+/).filter(function(e) { return e.length > 2; });
+    // add the first element to the end again to create a closed loop
     vertices.push(vertices[0]);
     debugField.value = vertices;
 
@@ -23,7 +24,8 @@ function drawPolygon() {
         initialized = true;
     }
 
-    var zoomFactor = c.width / vertices.length;
+    var max = 1 + Math.max.apply(null, vertices.map(function(e) { var edge = e.split(','); return (edge[0] > edge[1] ? edge[0] : edge[1]);}));
+    var zoomFactor = c.width / max;
 
     console.log("clearing " + c.width + " by " + c.height);
     ctx.clearRect(0, 0, c.width, c.height);
