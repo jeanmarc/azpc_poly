@@ -8,11 +8,14 @@ import nl.about42.poly.generator.LevelState
   */
 class StateReporter(datastore: DataStore) {
 
-  def report( size: Int, level: Int, tick: Long, levelState: Array[LevelState], currentPath: Path, currentSolution: Solution) = {
+  def report( size: Int, level: Int, tick: Long, start: Long, finish: Long, levelState: Array[LevelState], currentPath: Path, currentSolution: Solution) = {
     val result =
-      s""""
+      s"""
          |{"size": $size,
          | "tick": $tick,
+         | "start": $start,
+         | "finish": $finish,
+         | "duration": ${finish - start},
          | "level": $level,
          | "state": "${dumpState(levelState)}",
          | "currentPath": "${currentPath.codeString}",

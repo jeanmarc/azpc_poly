@@ -19,8 +19,9 @@ class ConsoleStore extends DataStore {
   * File Store, will save to a file root
   * @param root
   */
-class FileStore( root: String) extends DataStore {
+class FileStore( root: String) extends ConsoleStore {
   override def save(name: String, data: String): Unit = {
+    super.save(name, data)
     assert(name != "")
     val writer = new PrintWriter(getSaneFile(name))
     writer.write(data)

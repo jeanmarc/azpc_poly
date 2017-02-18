@@ -5,17 +5,34 @@
 
 var initialized = false;
 
-function drawPolygon() {
+function drawSolution() {
+    var form = document.getElementById("input_form");
+    var size = form.elements["size"].value;
+
+    if (size == "") {
+        return;
+    }
+    var name = "status_" + size + ".json";
+    var data = getSolution(name);
+    var inputValues = JSON.parse(data);
+    realDrawPolygon(inputValues);
+
+}
+
+function drawPolygon(){
     var form = document.getElementById("input_form");
     var inputValues = JSON.parse(form.elements["poly_input"].value);
+    realDrawPolygon(inputValues);
+}
+
+function realDrawPolygon(inputValues) {
+    var form = document.getElementById("input_form");
     var data = inputValues.maxSolution;
 
     var debugField = form.elements["debug"];
 
     var minVertices = getVertices(inputValues.minSolution, true);
     var maxVertices = getVertices(inputValues.maxSolution, true);
-    var currentVertices = getVertices(inputValues.currentPath, false);
-    debugField.value = minVertices + "\n" + maxVertices + "\n" + currentVertices;
 
     var c = document.getElementById("canvas");
     var ctx = c.getContext("2d");
@@ -28,12 +45,14 @@ function drawPolygon() {
     var max = 1 + Math.max.apply(null, maxVertices.map(function(e) { var edge = e.split(','); return (edge[0] * 1 > edge[1] * 1 ? edge[0] : edge[1]);}));
     var zoomFactor = c.width / max;
 
-    console.log("clearing " + c.width + " by " + c.height);
     ctx.clearRect(0, 0, c.width, c.height);
 
     drawPoly( maxVertices, ctx, zoomFactor, "#ff0000");
     drawPoly( minVertices, ctx, zoomFactor, "#006600");
-    drawPoly( currentVertices, ctx, zoomFactor, "#666666");
+    if (inputValues.currentPath != "") {
+        var currentVertices = getVertices(inputValues.currentPath, false);
+        drawPoly( currentVertices, ctx, zoomFactor, "#666666");
+    }
 }
 
 function getVertices(data, makeLoop) {
@@ -84,14 +103,22 @@ function drawVertice( x, y, ctx, f = 4) {
     ctx.closePath();
 }
 
+setInterval(drawSolution, 1000);
+
+function getSolution(name){
+    var Httpreq = new XMLHttpRequest(); // a new request
+    Httpreq.open("GET","results/" + name,false);
+    Httpreq.send(null);
+    return Httpreq.responseText;
+}
+
 </script>
 <body>
 <h1>Polygon drawing canvas</h1>
 <form id="input_form">
     <div>
-        <p>Paste a set of vertices in the input box and press
-            <span onclick="drawPolygon()">Draw</span>
-        </p>
+        <p>Paste a set of vertices in the input box and press <span onclick="drawPolygon()">Draw</span></p>
+        <p>Or enter a number in this box to automatically draw the latest status (if known): <input name="size" type="text"></p>
     </div>
     <span>
     <textarea name="poly_input" title="Polygon input" cols="80" rows="5">{"size": 11,

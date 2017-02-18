@@ -17,19 +17,21 @@ class PolygonBuilder(size: Int, dataStore: DataStore = new DataStore) extends Ca
   var levelState = Array.fill[LevelState](size)(new LevelState(0, 0))
   levelState(size - 1) = new LevelState(0, -1)
 
-  var minCandidate: Polygon = new Polygon(List(Vertex(1, 1), Vertex(2, 2)))
-  var maxCandidate: Polygon = new Polygon(List(Vertex(1, 1), Vertex(2, 2)))
+  var minCandidate: Polygon = new Polygon(List(Vertex(1, 1), Vertex(size, size)))
+  var maxCandidate: Polygon = new Polygon(List(Vertex(1, 1), Vertex(size, size)))
   var minArea: Double = 10e200
   var maxArea: Double = 0
 
   var currentSolution = new Solution(minArea, minCandidate, maxArea, maxCandidate)
   var done = false
+  var start = System.currentTimeMillis()
 
   def abort = {
     done = true
   }
 
   def solve: Solution = {
+    start = System.currentTimeMillis()
     while (!done) {
       val result = findNextPolygon(levelState, initialState)
       result match {
@@ -53,6 +55,7 @@ class PolygonBuilder(size: Int, dataStore: DataStore = new DataStore) extends Ca
       }
     }
 
+    report(size, 0, 0, Array.empty, new Path(Seq.empty))
     new Solution(minArea, minCandidate, maxArea, maxCandidate)
   }
 
@@ -132,7 +135,7 @@ class PolygonBuilder(size: Int, dataStore: DataStore = new DataStore) extends Ca
   }
 
   def report(size: Int, level: Int, tick: Long, levelState: Array[LevelState], path: Path) = {
-    stateReporter.report(size, level, tick, levelState, path, currentSolution)
+    stateReporter.report(size, level, tick, start, System.currentTimeMillis(), levelState, path, currentSolution)
   }
 
 }

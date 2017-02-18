@@ -1,6 +1,6 @@
 package nl.about42.poly.generator
 
-import nl.about42.poly.reporter.ConsoleStore
+import nl.about42.poly.reporter.{ConsoleStore, FileStore}
 import nl.about42.poly.{Path, Polygon, Vertex}
 
 /**
@@ -26,8 +26,14 @@ class PolygonBuilderTest extends org.scalatest.FunSuite {
   }
 
   test("Some polygons will be generated") {
-    val gridSize = 11
-    val pgBuilder = new PolygonBuilder(gridSize, new ConsoleStore)
+    //val gridSizes = List(5, 7, 11, 17, 23, 29, 37, 47, 59, 71, 83, 97, 113, 131, 149, 167, 191, 223, 257, 293, 331, 373, 419, 467, 521)
+
+    val gridSizes = List(521)
+    gridSizes.foreach(s => generate(s))
+  }
+
+  def generate(size: Int) = {
+    val pgBuilder = new PolygonBuilder(size, new FileStore("frontend/src/main/resources/www/results"))
 
     val solution = pgBuilder.solve
 

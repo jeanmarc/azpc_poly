@@ -1,0 +1,15 @@
+
+{"size": 5,
+ "tick": 0,
+ "start": 1487422696020,
+ "finish": 1487422696213,
+ "duration": 193,
+ "level": 0,
+ "state": "",
+ "currentPath": "",
+ "minArea": 1.5,
+ "minSolution": "(1,1),(2,2),(4,5),(3,3),(5,4)",
+ "maxArea": 9.0,
+ "maxSolution": "(1,2),(2,4),(4,5),(5,3),(3,1)"
+}
+       
