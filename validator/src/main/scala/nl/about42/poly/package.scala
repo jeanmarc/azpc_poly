@@ -63,4 +63,13 @@ package object poly {
 
   class Solution(val minArea: Double, val minPolygon: Polygon, val maxArea: Double, val maxPolygon: Polygon)
 
+  class LevelState(val dx: Int, val dy: Int)
+
+  class SolverState( val currentSolution: Solution, val level: Int, val levelState: Array[LevelState], val timeSpent: Long)
+
+  object SolverState {
+    def fromFile(filename: String): SolverState = {
+      StateBuilder.fromFile(filename)
+    }
+  }
 }

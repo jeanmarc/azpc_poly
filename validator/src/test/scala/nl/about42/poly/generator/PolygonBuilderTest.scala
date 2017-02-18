@@ -1,7 +1,7 @@
 package nl.about42.poly.generator
 
 import nl.about42.poly.reporter.{ConsoleStore, FileStore}
-import nl.about42.poly.{Path, Polygon, Vertex}
+import nl.about42.poly.{LevelState, Path, Polygon, Vertex}
 
 /**
  * Testing the builder

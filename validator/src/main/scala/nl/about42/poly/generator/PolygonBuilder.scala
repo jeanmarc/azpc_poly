@@ -59,7 +59,9 @@ class PolygonBuilder(size: Int, dataStore: DataStore = new DataStore) extends Ca
     new Solution(minArea, minCandidate, maxArea, maxCandidate)
   }
 
-  def solvePartial( ) = ???
+  def solvePartial(startState: SolverState, maxDuration: Long): SolverState = {
+    ???
+  }
 
   def findNextPolygon(levelState: Array[LevelState], polygonState: PolygonState): Option[(Polygon, Array[LevelState])] = {
     if (polygonState.remainingX.size == 0) {
@@ -142,7 +144,7 @@ class PolygonBuilder(size: Int, dataStore: DataStore = new DataStore) extends Ca
 
 }
 
-class LevelState(val dx: Int, val dy: Int)
+
 
 class PolygonState(val currentPath: Path, val remainingX: Seq[Int], val remainingY: Seq[Int]) extends CandidateEdgeValidator {
   def addVertex(vertex: Vertex): Option[PolygonState] = {

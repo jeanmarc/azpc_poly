@@ -1,7 +1,6 @@
 package nl.about42.poly.reporter
 
-import nl.about42.poly.{Path, Polygon, Solution}
-import nl.about42.poly.generator.LevelState
+import nl.about42.poly.{LevelState, Path, Solution}
 
 /**
   * Create parsable output to monitor current state of polygon generation
