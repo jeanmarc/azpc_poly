@@ -8,12 +8,14 @@ var initialized = false;
 function drawSolution() {
     var form = document.getElementById("input_form");
     var size = form.elements["size"].value;
+    var debugField = form.elements["debug"];
 
     if (size == "") {
         return;
     }
     var name = "status_" + size + ".json";
     var data = getSolution(name);
+    debugField.value = data;
     var inputValues = JSON.parse(data);
     realDrawPolygon(inputValues);
 
@@ -47,11 +49,11 @@ function realDrawPolygon(inputValues) {
 
     ctx.clearRect(0, 0, c.width, c.height);
 
-    drawPoly( maxVertices, ctx, zoomFactor, "#ff0000");
-    drawPoly( minVertices, ctx, zoomFactor, "#006600");
+    drawPoly( maxVertices, ctx, zoomFactor, "#ff9999");
+    drawPoly( minVertices, ctx, zoomFactor, "#99ff99");
     if (inputValues.currentPath != "") {
         var currentVertices = getVertices(inputValues.currentPath, false);
-        drawPoly( currentVertices, ctx, zoomFactor, "#666666");
+        drawPoly( currentVertices, ctx, zoomFactor, "#000000");
     }
 }
 
@@ -131,9 +133,10 @@ function getSolution(name){
  "maxArea": 62.0,
  "maxSolution": "(1,1),(2,2),(3,9),(6,7),(8,4),(7,6),(9,5),(5,8),(4,11),(10,10),(11,3)"
 }</textarea>
-    <textarea name="debug" title="Debug area" cols="80" rows="5"></textarea>
-    </span><span>
-    <canvas id="canvas" width="750" height="750" style="border:2px solid #993333;"></canvas></span>
+
+    </span>
+    <div>
+    <canvas id="canvas" width="750" height="750" style="border:2px solid #993333;"></canvas><textarea name="debug" title="Debug area" cols="100" rows="35"></textarea></div>
 </form>
 </body>
 </html>

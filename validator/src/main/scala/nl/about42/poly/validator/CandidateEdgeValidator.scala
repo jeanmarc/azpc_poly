@@ -14,13 +14,21 @@ trait CandidateEdgeValidator {
   // verify if any of the remaining point combinations could close the polygon
   def closingPossible( currentPath: Path, remX: Seq[Int], remY: Seq[Int]): Boolean = {
     val startPoint = currentPath.vertices.head
-    val remainingPath = currentPath.vertices.tail
+    val remainingPath = new Path(currentPath.vertices.tail)
+
+    //TODO: maybe this can be optimized to have an early breakout as soon as at least one possibility is found
     val points = for {
       x <- remX
       y <- remY
     } yield Vertex(x, y)
 
-    points.foldRight(false)((point, res) => res || validate(new Edge(point, startPoint), new Path(remainingPath)))
+    def canClose( res: Boolean, points: Seq[Vertex]): Boolean = points match {
+      case Nil => res
+      case head :: tail => res || validate(new Edge(head, startPoint), remainingPath)
+    }
+
+    canClose(false, points)
+    //points.foldRight(false)((point, res) => res || validate(new Edge(point, startPoint), remainingPath))
   }
 
   private def noIntersections(seg: Edge, edges: Seq[Edge]) = {
