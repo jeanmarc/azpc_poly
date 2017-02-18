@@ -10,7 +10,7 @@ import nl.about42.poly.validator.CandidateEdgeValidator
 class PolygonBuilder(size: Int, dataStore: DataStore = new DataStore) extends CandidateEdgeValidator {
   val stateReporter = new StateReporter(dataStore)
   val entry = System.currentTimeMillis()
-  val step = 10000
+  val step = 2000
   var tick = entry + step
 
   private val initialState = new PolygonState(new Path(Seq.empty), (1 to size).toList, (1 to size).toList)
@@ -58,6 +58,8 @@ class PolygonBuilder(size: Int, dataStore: DataStore = new DataStore) extends Ca
     report(size, 0, 0, Array.empty, new Path(Seq.empty))
     new Solution(minArea, minCandidate, maxArea, maxCandidate)
   }
+
+  def solvePartial( ) = ???
 
   def findNextPolygon(levelState: Array[LevelState], polygonState: PolygonState): Option[(Polygon, Array[LevelState])] = {
     if (polygonState.remainingX.size == 0) {
@@ -146,24 +148,38 @@ class PolygonState(val currentPath: Path, val remainingX: Seq[Int], val remainin
   def addVertex(vertex: Vertex): Option[PolygonState] = {
     //System.out.println(s"$remainingX - $remainingY - addvertex $vertex to ${currentPath.vertices}")
     if (!remainingX.contains(vertex.x) || !remainingY.contains(vertex.y)) {
+      // the x and y values still have to be available
       None
     } else {
       currentPath.vertices.size match {
         case 0 => if (vertex.x != 1 || vertex.y > 1 + remainingY.size / 2) {
-          None
-        } else {
-          Some(new PolygonState(new Path(Seq(vertex)), remainingX.filter(_ != vertex.x), remainingY.filter(_ != vertex.y)))
-        }
+            // the first point must have x == 1 and y in the bottom half (incl mid value)
+            None
+          } else {
+            Some(new PolygonState(new Path(Seq(vertex)), remainingX.filter(_ != vertex.x), remainingY.filter(_ != vertex.y)))
+          }
         case 1 => if (vertex.y < currentPath.vertices.head.y) {
-          None
-        } else {
-          Some(new PolygonState(new Path(currentPath.vertices :+ vertex), remainingX.filter(_ != vertex.x), remainingY.filter(_ != vertex.y)))
-        }
+            // the second point must have a positive slope
+            None
+          } else {
+            Some(new PolygonState(new Path(currentPath.vertices :+ vertex), remainingX.filter(_ != vertex.x), remainingY.filter(_ != vertex.y)))
+          }
         case _ => if (validate(new Edge(currentPath.vertices.last, vertex), currentPath)) {
-          Some(new PolygonState(new Path(currentPath.vertices :+ vertex), remainingX.filter(_ != vertex.x), remainingY.filter(_ != vertex.y)))
-        } else {
-          None
-        }
+            val remX = remainingX.filter(_ != vertex.x)
+            val remY = remainingY.filter(_ != vertex.y)
+            val newPath = new Path(currentPath.vertices :+ vertex)
+            if (2 < remX.size  && remX.size < 4){
+              if (closingPossible(newPath, remX, remY)) {
+                Some(new PolygonState(newPath, remX, remY))
+              } else {
+                None
+              }
+            } else {
+              Some(new PolygonState(newPath, remX, remY))
+            }
+          } else {
+            None
+          }
       }
     }
   }

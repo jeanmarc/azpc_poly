@@ -28,7 +28,7 @@ class PolygonBuilderTest extends org.scalatest.FunSuite {
   test("Some polygons will be generated") {
     //val gridSizes = List(5, 7, 11, 17, 23, 29, 37, 47, 59, 71, 83, 97, 113, 131, 149, 167, 191, 223, 257, 293, 331, 373, 419, 467, 521)
 
-    val gridSizes = List(521)
+    val gridSizes = List(11)
     gridSizes.foreach(s => generate(s))
   }
 

@@ -11,6 +11,18 @@ trait CandidateEdgeValidator {
     noIntersections(edge, currentPath.edges.dropRight(1))
   }
 
+  // verify if any of the remaining point combinations could close the polygon
+  def closingPossible( currentPath: Path, remX: Seq[Int], remY: Seq[Int]): Boolean = {
+    val startPoint = currentPath.vertices.head
+    val remainingPath = currentPath.vertices.tail
+    val points = for {
+      x <- remX
+      y <- remY
+    } yield Vertex(x, y)
+
+    points.foldRight(false)((point, res) => res || validate(new Edge(point, startPoint), new Path(remainingPath)))
+  }
+
   private def noIntersections(seg: Edge, edges: Seq[Edge]) = {
     def checkSegment(seg: Edge, edges: Seq[Edge]): Boolean = {
       edges match {
