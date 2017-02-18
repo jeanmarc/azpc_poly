@@ -1,6 +1,7 @@
 package nl.about42.poly.generator
 
-import nl.about42.poly.{ Path, Polygon, Vertex }
+import nl.about42.poly.reporter.ConsoleStore
+import nl.about42.poly.{Path, Polygon, Vertex}
 
 /**
  * Testing the builder
@@ -26,44 +27,12 @@ class PolygonBuilderTest extends org.scalatest.FunSuite {
 
   test("Some polygons will be generated") {
     val gridSize = 11
-    val pgBuilder = new PolygonBuilder(gridSize)
+    val pgBuilder = new PolygonBuilder(gridSize, new ConsoleStore)
 
-    val initialState = new PolygonState(new Path(Seq.empty), (1 to gridSize).toList, (1 to gridSize).toList)
-    var levelState = Array.fill[LevelState](gridSize)(new LevelState(0, 0))
-    levelState(4) = new LevelState(0, -1)
+    val solution = pgBuilder.solve
 
-    var minCandidate: Polygon = new Polygon(List(Vertex(1, 1), Vertex(2, 2)))
-    var maxCandidate: Polygon = new Polygon(List(Vertex(1, 1), Vertex(2, 2)))
-    var minArea: Double = 10e200
-    var maxArea: Double = 0
-
-    var done = false
-
-    while (!done) {
-      //dumpState(levelState)
-      val result = pgBuilder.findNextPolygon(levelState, initialState)
-      //dumpState(levelState)
-      result match {
-        case Some((pol, state)) => {
-          levelState = state
-          val area = pol.area
-          if (area > maxArea) {
-            maxCandidate = pol
-            maxArea = area
-            System.out.println(s"new max: ${maxCandidate.codeString} -       $area")
-          }
-          if (area < minArea) {
-            minCandidate = pol
-            minArea = area
-            System.out.println(s"new min: ${minCandidate.codeString} - $area")
-          }
-        }
-        case _ => done = true
-      }
-    }
-
-    System.out.println(s"final min: ${minCandidate.codeString} - $minArea")
-    System.out.println(s"final max: ${maxCandidate.codeString} - $maxArea")
+    System.out.println(s"final min: ${solution.minPolygon.codeString} - ${solution.minArea}")
+    System.out.println(s"final max: ${solution.maxPolygon.codeString} - ${solution.maxArea}")
 
   }
 

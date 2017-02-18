@@ -1,42 +1,61 @@
 package nl.about42.poly.generator
 
-import nl.about42.poly.{ Edge, Path, Polygon, Vertex }
+import nl.about42.poly.reporter.{DataStore, StateReporter}
+import nl.about42.poly._
 import nl.about42.poly.validator.CandidateEdgeValidator
 
 /**
  * Generator that will build all possible polygons an a grid of size N, following a set of rules
  */
-class PolygonBuilder(size: Int) extends CandidateEdgeValidator {
+class PolygonBuilder(size: Int, dataStore: DataStore = new DataStore) extends CandidateEdgeValidator {
+  val stateReporter = new StateReporter(dataStore)
   val entry = System.currentTimeMillis()
   val step = 10000
   var tick = entry + step
 
   private val initialState = new PolygonState(new Path(Seq.empty), (1 to size).toList, (1 to size).toList)
-  /*
-  override def iterator: Iterator[Polygon] = new Iterator[Polygon] {
-    var levelState = Array.fill[LevelState](size)(new LevelState(0,0))
-    var nextPol:Polygon = new Polygon(Seq(new Vertex(1,1), new Vertex(1,2)))
-    var beenFetched = true
-    def hasNext: Boolean = {
-      if (!beenFetched)
-        return true
+  var levelState = Array.fill[LevelState](size)(new LevelState(0, 0))
+  levelState(size - 1) = new LevelState(0, -1)
 
-      beenFetched = false
-      val res = findNextPolygon(levelState, initialState)
-      res match {
-        case None => false
-        case Some((pol, state)) =>
+  var minCandidate: Polygon = new Polygon(List(Vertex(1, 1), Vertex(2, 2)))
+  var maxCandidate: Polygon = new Polygon(List(Vertex(1, 1), Vertex(2, 2)))
+  var minArea: Double = 10e200
+  var maxArea: Double = 0
+
+  var currentSolution = new Solution(minArea, minCandidate, maxArea, maxCandidate)
+  var done = false
+
+  def abort = {
+    done = true
+  }
+
+  def solve: Solution = {
+    while (!done) {
+      val result = findNextPolygon(levelState, initialState)
+      result match {
+        case Some((pol, state)) => {
           levelState = state
-          nextPol = pol
-          true
+          val area = pol.area
+          if (area > maxArea) {
+            maxCandidate = pol
+            maxArea = area
+            System.out.println(s"new max: ${maxCandidate.codeString} -       $area")
+            currentSolution = new Solution(minArea, minCandidate, maxArea, maxCandidate)
+          }
+          if (area < minArea) {
+            minCandidate = pol
+            minArea = area
+            System.out.println(s"new min: ${minCandidate.codeString} - $area")
+            currentSolution = new Solution(minArea, minCandidate, maxArea, maxCandidate)
+          }
+        }
+        case _ => done = true
       }
     }
-    def next = {
-      nextPol
-    }
 
+    new Solution(minArea, minCandidate, maxArea, maxCandidate)
   }
-*/
+
   def findNextPolygon(levelState: Array[LevelState], polygonState: PolygonState): Option[(Polygon, Array[LevelState])] = {
     if (polygonState.remainingX.size == 0) {
       // check if closing the path succeeds without intersections and with a correct slope
@@ -66,9 +85,8 @@ class PolygonBuilder(size: Int) extends CandidateEdgeValidator {
       }
       while (x < limit && y < limit) {
         if (System.currentTimeMillis() > tick){
+          report(size, level, tick, levelState, polygonState.currentPath)
           tick = System.currentTimeMillis() + step
-          System.out.print(s"$level working on ")
-          dumpState(levelState)
         }
         var attempt = polygonState.addVertex(new Vertex(polygonState.remainingX(x), polygonState.remainingY(y)))
         attempt match {
@@ -113,11 +131,10 @@ class PolygonBuilder(size: Int) extends CandidateEdgeValidator {
     }
   }
 
-  private def dumpState(state: Array[LevelState]) = {
-    state.foreach(s => System.out.print(s"(${s.dx},${s.dy}),"))
-    System.out.println()
-
+  def report(size: Int, level: Int, tick: Long, levelState: Array[LevelState], path: Path) = {
+    stateReporter.report(size, level, tick, levelState, path, currentSolution)
   }
+
 }
 
 class LevelState(val dx: Int, val dy: Int)

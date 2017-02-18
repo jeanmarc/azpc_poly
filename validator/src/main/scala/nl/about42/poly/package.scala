@@ -61,4 +61,6 @@ package object poly {
     def asPolygon: Polygon = new Polygon(vertices)
   }
 
+  class Solution(val minArea: Double, val minPolygon: Polygon, val maxArea: Double, val maxPolygon: Polygon)
+
 }

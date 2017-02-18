@@ -7,8 +7,8 @@ import nl.about42.poly.{ Edge, Path, Vertex }
  */
 trait CandidateEdgeValidator {
   def validate(edge: Edge, currentPath: Path) = {
-    noIntersections(edge, currentPath.edges.dropRight(1)) &&
-      uniqueSlopes(edge, currentPath.edges)
+    uniqueSlopes(edge, currentPath.edges) &&
+    noIntersections(edge, currentPath.edges.dropRight(1))
   }
 
   private def noIntersections(seg: Edge, edges: Seq[Edge]) = {
