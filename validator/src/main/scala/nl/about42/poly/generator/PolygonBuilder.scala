@@ -170,7 +170,7 @@ class PolygonState(val currentPath: Path, val remainingX: Seq[Int], val remainin
             val remX = remainingX.filter(_ != vertex.x)
             val remY = remainingY.filter(_ != vertex.y)
             val newPath = new Path(currentPath.vertices :+ vertex)
-            if (remX.size == 4){
+            if (remX.size == 5){
               if (closingPossible(newPath, remX, remY)) {
                 Some(new PolygonState(newPath, remX, remY))
               } else {

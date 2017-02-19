@@ -49,6 +49,8 @@ function realDrawPolygon(inputValues) {
 
     ctx.clearRect(0, 0, c.width, c.height);
 
+    drawGrid(ctx, max, zoomFactor);
+
     drawPoly( maxVertices, ctx, zoomFactor, "#ff9999");
     drawPoly( minVertices, ctx, zoomFactor, "#99ff99");
     if (inputValues.currentPath != "") {
@@ -63,6 +65,19 @@ function getVertices(data, makeLoop) {
         result.push(result[0]);
     }
     return result;
+}
+
+function drawGrid( ctx, max, f){
+    ctx.beginPath();
+    ctx.strokeStyle = "#cccccc";
+    for (var i = 0; i <= max; i++) {
+        ctx.moveTo(f*i, 0);
+        ctx.lineTo(f*i, f*max);
+        ctx.moveTo(0, f*i);
+        ctx.lineTo(f*max, f*i);
+    }
+    ctx.stroke();
+    ctx.closePath();
 }
 
 function drawPoly( vertices, ctx, zoomFactor, color) {
